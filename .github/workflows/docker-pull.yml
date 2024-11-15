@@ -27,12 +27,12 @@ jobs:
 
       - name: Pull source multi-arch image
         run: |
-          docker pull --platform linux/amd64,linux/arm64 sifan1/vodspider:latest
+          docker pull --platform linux/amd64,linux/arm64 library/nginx:latest
 
       - name: Tag the image for target repository
         run: |
-          docker tag sifan1/vodspider:latest abansheng/vod:latest
+          docker tag library/nginx:latest abansheng/nginx-mirror:latest
 
       - name: Push the image to your DockerHub repository
         run: |
-          docker push abansheng/vod:latest
+          docker push abansheng/nginx-mirror:latest
