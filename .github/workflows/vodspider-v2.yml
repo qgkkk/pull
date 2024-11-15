@@ -39,8 +39,7 @@ jobs:
     - name: Build and push multi-arch Docker image
       run: |
         docker buildx create --use
-        docker buildx build --platform linux/amd64,linux/arm64 --cache-from=type=registry,ref=sifan1/vodspider:v2 --tag ${{ env.IMAGE_TAG }} .
-        docker buildx push --platform linux/amd64,linux/arm64 ${{ env.IMAGE_TAG }}
+        docker buildx build --platform linux/amd64,linux/arm64 --cache-from=type=registry,ref=sifan1/vodspider:v2 --tag ${{ env.IMAGE_TAG }} --push -f Dockerfile .
 
     - name: Clean up Docker images
       run: |
