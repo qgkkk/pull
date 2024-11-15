@@ -3,7 +3,7 @@ name: Mirror Nginx Image
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # 每天定时执行一次，或使用手动触发
+    - cron: '0 0 * * *' # 每天定时执行一次，或手动触发
 
 jobs:
   mirror-image:
@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2 # 使 Docker 支持多架构
+        uses: docker/setup-qemu-action@v2 # 支持多架构
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -25,14 +25,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Pull source multi-arch image
+      - name: Pull and tag amd64 image
         run: |
-          docker pull --platform linux/amd64,linux/arm64 library/nginx:latest
+          docker pull --platform linux/amd64 library/nginx:latest
+          docker tag library/nginx:latest abansheng/nginx-mirror:amd64
 
-      - name: Tag the image for target repository
+      - name: Pull and tag arm64 image
         run: |
-          docker tag library/nginx:latest abansheng/nginx-mirror:latest
+          docker pull --platform linux/arm64 library/nginx:latest
+          docker tag library/nginx:latest abansheng/nginx-mirror:arm64
 
-      - name: Push the image to your DockerHub repository
+      - name: Create and push multi-arch manifest
         run: |
-          docker push abansheng/nginx-mirror:latest
+          docker manifest create abansheng/nginx-mirror:latest \
+            --amend abansheng/nginx-mirror:amd64 \
+            --amend abansheng/nginx-mirror:arm64
+          docker manifest push abansheng/nginx-mirror:latest
