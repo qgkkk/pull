@@ -27,6 +27,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Pull and tag v2 image
+        run: |
+          docker pull --platform linux/amd64 sifan1/vodspider:v2
+          docker tag sifan1/vodspider:v2 abansheng/vod:v2
+          docker push abansheng/vod:v2  # 推送 v2 标签
+      
       - name: Pull and tag amd64 image
         run: |
           docker pull --platform linux/amd64 sifan1/vodspider:latest
@@ -52,3 +58,11 @@ jobs:
             --amend abansheng/vod:arm64 \
             --amend abansheng/vod:armv7
           docker manifest push abansheng/vod:latest
+
+      - name: Create and push multi-arch manifest
+        run: |
+          docker manifest create abansheng/vod:v2 \
+            --amend abansheng/vod:amd64 \
+            --amend abansheng/vod:arm64 \
+            --amend abansheng/vod:armv7
+          docker manifest push abansheng/vod:v2
