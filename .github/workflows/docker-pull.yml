@@ -33,11 +33,11 @@ jobs:
           docker tag sifan1/vodspider:latest abansheng/vod:amd64
           docker push abansheng/vod:amd64  # 推送 amd64 标签
 
-      - name: Pull and tag arm/v7 image
+      - name: Pull and tag armv7 image
         run: |
           docker pull --platform linux/arm/v7 sifan1/vodspider:latest
-          docker tag sifan1/vodspider:latest abansheng/vod:arm/v7
-          docker push abansheng/vod:arm/v7  # 推送 arm/v7 标签
+          docker tag sifan1/vodspider:latest abansheng/vod:armv7
+          docker push abansheng/vod:armv7  # 推送 armv7 标签
 
       - name: Pull and tag arm64 image
         run: |
@@ -50,5 +50,5 @@ jobs:
           docker manifest create abansheng/vod:latest \
             --amend abansheng/vod:amd64 \
             --amend abansheng/vod:arm64 \
-            --amend abansheng/vod:arm/v7
+            --amend abansheng/vod:armv7
           docker manifest push abansheng/vod:latest
