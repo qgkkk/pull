@@ -34,7 +34,7 @@ jobs:
       # Step 4: 分别处理每个架构和版本
       - name: Mirror and push amd64 images
         run: |
-          for version in v2 v4 latest; do
+          for version in v2 v3 v4 latest; do
             echo "Processing version: $version for platform: linux/amd64"
             docker pull --platform linux/amd64 ${{ env.IMAGE_SOURCE }}:$version || continue
             docker tag ${{ env.IMAGE_SOURCE }}:$version ${{ env.IMAGE_TARGET }}:$version-amd64
@@ -43,7 +43,7 @@ jobs:
 
       - name: Mirror and push arm64 images
         run: |
-          for version in v2 v4 latest; do
+          for version in v2 v3 v4 latest; do
             echo "Processing version: $version for platform: linux/arm64"
             docker pull --platform linux/arm64 ${{ env.IMAGE_SOURCE }}:$version || continue
             docker tag ${{ env.IMAGE_SOURCE }}:$version ${{ env.IMAGE_TARGET }}:$version-arm64
@@ -52,7 +52,7 @@ jobs:
 
       - name: Mirror and push armv7 images
         run: |
-          for version in v2 v4 latest; do
+          for version in v2 v3 v4 latest; do
             echo "Processing version: $version for platform: linux/arm/v7"
             docker pull --platform linux/arm/v7 ${{ env.IMAGE_SOURCE }}:$version || continue
             docker tag ${{ env.IMAGE_SOURCE }}:$version ${{ env.IMAGE_TARGET }}:$version-armv7
@@ -62,7 +62,7 @@ jobs:
       # Step 5: 分别创建多架构清单
       - name: Create and push multi-arch manifests
         run: |
-          for version in v2 v4 latest; do
+          for version in v2 v3 v4 latest; do
             echo "Creating multi-arch manifest for version: $version"
             docker manifest create ${{ env.IMAGE_TARGET }}:$version \
               --amend ${{ env.IMAGE_TARGET }}:$version-amd64 \
