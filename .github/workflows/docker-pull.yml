@@ -32,6 +32,11 @@ jobs:
           docker pull --platform linux/amd64 sifan1/vodspider:v2
           docker tag sifan1/vodspider:v2 abansheng/vod:v2
           docker push abansheng/vod:v2  # 推送 v2 标签
+      - name: Pull and tag v4 image
+        run: |
+          docker pull --platform linux/amd64 sifan1/vodspider:v4
+          docker tag sifan1/vodspider:v4 abansheng/vod:v4
+          docker push abansheng/vod:v4  # 推送 v4 标签
       
       - name: Pull and tag amd64 image
         run: |
