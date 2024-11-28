@@ -40,8 +40,8 @@ jobs:
             echo "Processing version: $version with platforms: ${{ env.PLATFORMS }}"
             docker buildx build \
               --platform ${{ env.PLATFORMS }} \
-              --pull \
               --push \
               --tag ${{ env.IMAGE_TARGET }}:$version \
-              docker://{{ env.IMAGE_SOURCE }}:$version
+              --file <(echo "FROM ${{ env.IMAGE_SOURCE }}:$version") \
+              .
           done
