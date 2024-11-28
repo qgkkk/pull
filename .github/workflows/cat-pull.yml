@@ -9,7 +9,7 @@ env:
   IMAGE_SOURCE: sifan1/vodspider
   IMAGE_TARGET: abansheng/vod
   VERSIONS: v2 v3 v4 latest
-  PLATFORMS: linux/amd64 linux/arm64 linux/arm/v7
+  PLATFORMS: linux/amd64,linux/arm64,linux/arm/v7
 
 jobs:
   mirror-image:
@@ -33,28 +33,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: 拉取、标记和推送镜像
-      - name: Mirror and push images for all versions and platforms
+      # Step 4: 拉取、标记并推送多架构镜像
+      - name: Mirror and push multi-arch images
         run: |
           for version in ${{ env.VERSIONS }}; do
-            for platform in ${{ env.PLATFORMS }}; do
-              tag=${platform//\//_}  # 将平台名称中的斜杠替换为下划线
-              echo "Processing version: $version for platform: $platform"
-              docker pull --platform $platform ${{ env.IMAGE_SOURCE }}:$version || continue
-              docker tag ${{ env.IMAGE_SOURCE }}:$version ${{ env.IMAGE_TARGET }}:$version-$tag
-              docker push ${{ env.IMAGE_TARGET }}:$version-$tag
-            done
-          done
-
-      # Step 5: 创建并推送多架构清单
-      - name: Create and push multi-arch manifests
-        run: |
-          for version in ${{ env.VERSIONS }}; do
-            echo "Creating multi-arch manifest for version: $version"
-            docker manifest create ${{ env.IMAGE_TARGET }}:$version \
-              $(for platform in ${{ env.PLATFORMS }}; do \
-                tag=${platform//\//_}; \
-                echo "--amend ${{ env.IMAGE_TARGET }}:$version-$tag"; \
-              done)
-            docker manifest push ${{ env.IMAGE_TARGET }}:$version
+            echo "Processing version: $version with platforms: ${{ env.PLATFORMS }}"
+            docker buildx build \
+              --platform ${{ env.PLATFORMS }} \
+              --pull \
+              --push \
+              --tag ${{ env.IMAGE_TARGET }}:$version \
+              docker://{{ env.IMAGE_SOURCE }}:$version
           done
