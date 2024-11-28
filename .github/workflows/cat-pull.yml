@@ -33,15 +33,23 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: 拉取、标记并推送多架构镜像
-      - name: Mirror and push multi-arch images
+      # Step 4: 创建临时 Dockerfile 并进行构建
+      - name: Build and push multi-arch images
         run: |
           for version in ${{ env.VERSIONS }}; do
             echo "Processing version: $version with platforms: ${{ env.PLATFORMS }}"
+            
+            # 创建临时 Dockerfile
+            echo "FROM ${{ env.IMAGE_SOURCE }}:$version" > Dockerfile.tmp
+
+            # 使用 buildx 构建并推送多架构镜像
             docker buildx build \
               --platform ${{ env.PLATFORMS }} \
               --push \
               --tag ${{ env.IMAGE_TARGET }}:$version \
-              --file <(echo "FROM ${{ env.IMAGE_SOURCE }}:$version") \
+              --file Dockerfile.tmp \
               .
+
+            # 删除临时文件
+            rm Dockerfile.tmp
           done
