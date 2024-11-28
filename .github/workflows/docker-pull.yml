@@ -66,3 +66,19 @@ jobs:
             --amend abansheng/vod:arm64 \
             --amend abansheng/vod:armv7
           docker manifest push abansheng/vod:v2
+
+      - name: Create and push multi-arch manifest
+        run: |
+          docker manifest create abansheng/vod:v3 \
+            --amend abansheng/vod:amd64 \
+            --amend abansheng/vod:arm64 \
+            --amend abansheng/vod:armv7
+          docker manifest push abansheng/vod:v3
+
+      - name: Create and push multi-arch manifest
+        run: |
+          docker manifest create abansheng/vod:v4 \
+            --amend abansheng/vod:amd64 \
+            --amend abansheng/vod:arm64 \
+            --amend abansheng/vod:armv7
+          docker manifest push abansheng/vod:v4
